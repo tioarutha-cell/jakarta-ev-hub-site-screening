@@ -88,7 +88,12 @@ async function main() {
     sourcesDrawer.classList.remove("hidden");
   });
   document.getElementById("methodology-btn")?.addEventListener("click", () => {
-    window.open("/METHODOLOGY.md", "_blank");
+    // METHODOLOGY.md lives at the repo root, not in public/, so it isn't part of
+    // the deployed site build — link to the canonical copy on GitHub instead.
+    window.open(
+      "https://github.com/tioarutha-cell/jakarta-ev-hub-site-screening/blob/main/METHODOLOGY.md",
+      "_blank"
+    );
   });
 
   document.querySelectorAll<HTMLElement>(".mode-btn").forEach((btn) => {
@@ -100,12 +105,16 @@ async function main() {
   });
 
   console.log("Loading map data...");
+  // Relative, not "/map-data/..." — this app is also hosted from a subpath on
+  // GitHub Pages (https://<user>.github.io/<repo>/), where an absolute root path
+  // would resolve to the wrong location. Relative paths resolve correctly under
+  // both local dev (served from "/") and a subpath deployment.
   const [rdtr, kecamatan, kelurahan, kota, kkop] = await Promise.all([
-    loadJSON("/map-data/rdtr-scored.geojson"),
-    loadJSON("/map-data/admin-kecamatan.geojson"),
-    loadJSON("/map-data/admin-kelurahan.geojson"),
-    loadJSON("/map-data/admin-kota.geojson"),
-    loadJSON("/map-data/kkop.geojson")
+    loadJSON("map-data/rdtr-scored.geojson"),
+    loadJSON("map-data/admin-kecamatan.geojson"),
+    loadJSON("map-data/admin-kelurahan.geojson"),
+    loadJSON("map-data/admin-kota.geojson"),
+    loadJSON("map-data/kkop.geojson")
   ]);
   console.log(`Loaded ${rdtr.features.length} RDTR zones, ${kecamatan.features.length} kecamatan, ${kelurahan.features.length} kelurahan.`);
   expandProperties(rdtr);
