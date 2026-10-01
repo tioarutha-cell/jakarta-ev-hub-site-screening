@@ -6,6 +6,7 @@ import Parser from "stream-json";
 import { pick } from "stream-json/filters/pick.js";
 import { streamArray } from "stream-json/streamers/stream-array.js";
 import { evaluateSite } from "../src/scoring/score.js";
+import { CATEGORY_CODE } from "../src/scoring/zoningRules.js";
 import { DEFAULT_SCENARIO } from "../src/state/scenario.js";
 import { writeGeoJSONStream } from "./lib/streamWrite.mjs";
 
@@ -16,11 +17,11 @@ const RAW_DIR = path.resolve("raw-data");
 // file serving, not a change in meaning.
 const OUT_DIR = path.resolve("public/map-data");
 
-// ~9m at Jakarta's latitude. Raised from 0.00003 (~3m) specifically to get the
+// ~13m at Jakarta's latitude. Raised from 0.00003 (~3m) specifically to get the
 // shipped file under GitHub's 100MB single-file push limit (needed for GitHub Pages
 // hosting) — also a straightforward web-performance win either way. Documented in
 // METHODOLOGY.md.
-const SIMPLIFY_TOLERANCE = 0.00008;
+const SIMPLIFY_TOLERANCE = 0.00012;
 
 // The raw RDTR pull is ~1.4GB — well past V8's safe max string length, so it cannot
 // be read with readFile()+JSON.parse() (that's exactly the failure the streamed
@@ -73,6 +74,25 @@ function lookupFlood(centroid, wadmkd, floodIndex) {
   return null;
 }
 
+// Coordinates arrive with ~15-17 significant digits of floating-point noise from
+// reprojection/turf.simplify (e.g. 106.85818277499999) — far beyond any meaningful
+// precision (6 decimal places is ~11cm). Rounding is a pure size win with no visible
+// effect at any zoom level this tool supports.
+function roundCoords(coords) {
+  if (typeof coords[0] === "number") {
+    return coords.map((n) => Math.round(n * 1e6) / 1e6);
+  }
+  return coords.map(roundCoords);
+}
+
+// Most zones have no special-area overlay — ship undefined (omitted by
+// JSON.stringify) instead of the literal "Tidak Ada" string. Every reader of these
+// fields already treats a falsy/absent value the same as "Tidak Ada" (see gates.js),
+// so this is a pure size win, not a behavior change.
+function flag(v) {
+  return v && v !== "Tidak Ada" ? v : undefined;
+}
+
 // Fields retained on the shipped feature: identifiers, display fields, resolved
 // (numeric) intensity values, and the special-area overlay flags. Two categories of
 // data are deliberately NOT shipped raw on all 109k features, to keep the bulk
@@ -91,44 +111,58 @@ function lookupFlood(centroid, wadmkd, floodIndex) {
 //      available in raw-data/rdtr-2022.geojson and is reproducible via
 //      `npm run process:score` — nothing is lost, only de-duplicated. See
 //      METHODOLOGY.md.
+// Shipped property keys are short codes, NOT the application's real field names —
+// src/main.ts's expandProperties() renames every one of these back to its full name
+// (see the EXPAND_KEYS map there) immediately after fetch, before the data reaches
+// any other module. Every other consumer (rescore.ts, sitePanel.ts, explain.ts,
+// layers.ts) only ever sees the expanded, full-name version and has no knowledge of
+// this wire encoding. Keep this object's keys and main.ts's EXPAND_KEYS in sync.
 function slimProperties(props, evaluation) {
   return {
     OBJECTID: props.OBJECTID,
     NAMOBJ: props.NAMOBJ,
     KODZON: props.KODZON,
-    KODSZN: props.KODSZN,
     KODSZNTEXT: props.KODSZNTEXT,
     WADMKK: props.WADMKK,
     WADMKC: props.WADMKC,
     WADMKD: props.WADMKD,
-    LUASHA: props.LUASHA,
-    KKOP_1: props.KKOP_1,
-    KSMPDN: props.KSMPDN,
-    KRB_03: props.KRB_03,
-    CAGBUD: props.CAGBUD,
-    HANKAM: props.HANKAM,
-    RESAIR: props.RESAIR,
-    KKARST: props.KKARST,
-    LP2B_2: props.LP2B_2,
-    TOD_04: props.TOD_04,
-    TEB_05: props.TEB_05,
-    classification: evaluation.classification,
-    compositeScore: evaluation.compositeScore,
-    landUseGate: evaluation.gates.landUse.gate,
-    useCategories: JSON.stringify(
-      evaluation.gates.landUse.categories?.map((c) => ({ id: c.id, s: c.status, t: c.matchedTerm })) ??
-        []
-    ),
-    heightGate: evaluation.gates.height.gate,
-    estimatedMaxHeightM: evaluation.gates.height.estimatedMaxHeightM,
-    requiredKLB: evaluation.gates.intensity.klb.requiredKLB,
-    resolvedKLB: evaluation.gates.intensity.klb.value,
-    resolvedKDB: evaluation.gates.intensity.kdb.value,
-    resolvedKDH: evaluation.gates.intensity.kdh.value,
-    kkopStatus: evaluation.gates.kkop.status,
-    setbackStatus: evaluation.gates.setback.status,
-    specialFlags: evaluation.gates.specialFlags.join(" | "),
-    floodClass: evaluation.gates.flood.class
+    KKOP_1: flag(props.KKOP_1),
+    KSMPDN: flag(props.KSMPDN),
+    KRB_03: flag(props.KRB_03),
+    CAGBUD: flag(props.CAGBUD),
+    HANKAM: flag(props.HANKAM),
+    RESAIR: flag(props.RESAIR),
+    KKARST: flag(props.KKARST),
+    LP2B_2: flag(props.LP2B_2),
+    TOD_04: flag(props.TOD_04),
+    TEB_05: flag(props.TEB_05),
+    cls: evaluation.classification, // classification
+    score: evaluation.compositeScore, // compositeScore
+    lug: evaluation.gates.landUse.gate, // landUseGate
+    // The specific regulation term matched (c.matchedTerm) is not shipped: no
+    // current UI reads it (only id + status drive the panel), and across 109k
+    // features it was the single largest contributor to file size. It remains
+    // fully reproducible from raw-data/rdtr-2022.geojson's IZN/BST/TBS/TBT fields
+    // via `npm run process:score` if a future UI needs to cite it. Category ids are
+    // also coded down to 2 letters (CATEGORY_CODE) for the same reason.
+    uses: JSON.stringify(
+      evaluation.gates.landUse.categories?.map((c) => ({ id: CATEGORY_CODE[c.id] ?? c.id, s: c.status })) ?? []
+    ), // useCategories
+    hg: evaluation.gates.height.gate, // heightGate
+    // requiredKLB is NOT shipped: it's purely scenario-derived (storeys x KDB), and
+    // the client's rescore.ts always recomputes it live from resolvedKDB — shipping
+    // the default-scenario value here would be dead weight, never read.
+    maxH:
+      evaluation.gates.height.estimatedMaxHeightM != null
+        ? Math.round(evaluation.gates.height.estimatedMaxHeightM * 100) / 100
+        : null, // estimatedMaxHeightM
+    klb: evaluation.gates.intensity.klb.value, // resolvedKLB
+    kdb: evaluation.gates.intensity.kdb.value, // resolvedKDB
+    kdh: evaluation.gates.intensity.kdh.value, // resolvedKDH
+    kkop: evaluation.gates.kkop.status, // kkopStatus
+    sb: evaluation.gates.setback.status, // setbackStatus
+    flags: evaluation.gates.specialFlags.join(" | ") || undefined, // specialFlags
+    flood: evaluation.gates.flood.class // floodClass
   };
 }
 
@@ -165,12 +199,16 @@ async function main() {
         } catch {
           simplified = f;
         }
+        const geometry = {
+          ...simplified.geometry,
+          coordinates: roundCoords(simplified.geometry.coordinates)
+        };
 
         stats.classCounts[evaluation.classification] = (stats.classCounts[evaluation.classification] || 0) + 1;
 
         yield {
           type: "Feature",
-          geometry: simplified.geometry,
+          geometry,
           properties: slimProperties(f.properties, evaluation)
         };
       } catch (err) {

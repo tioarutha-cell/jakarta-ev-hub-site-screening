@@ -7,6 +7,7 @@ import { renderLegend } from "./ui/legend.js";
 import { renderSourcesDrawer } from "./ui/sourcesDrawer.js";
 import { renderSearch, type LocalIndexEntry } from "./ui/search.js";
 import { getState, subscribe, setState, type LayerToggles } from "./state/store.js";
+import { CATEGORY_CODE_TO_ID } from "./scoring/zoningRules.js";
 
 const LAYER_TO_MAP_LAYERS: Record<string, string[]> = {
   kkop: ["kkop-fill", "kkop-outline"]
@@ -16,6 +17,53 @@ async function loadJSON(url: string) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
   return res.json();
+}
+
+// scripts/score-parcels.mjs ships short property keys to keep the ~109k-feature
+// rdtr-scored.geojson file small (it must fit GitHub's 100MB single-file push
+// limit). This expands every feature's properties back to the full names the rest
+// of the app (rescore.ts, sitePanel.ts, explain.ts, layers.ts) already expects, so
+// nothing downstream needs to know the wire encoding exists. Keep in sync with
+// slimProperties() in scripts/score-parcels.mjs.
+const EXPAND_KEYS: Record<string, string> = {
+  cls: "classification",
+  score: "compositeScore",
+  lug: "landUseGate",
+  uses: "useCategories",
+  hg: "heightGate",
+  maxH: "estimatedMaxHeightM",
+  klb: "resolvedKLB",
+  kdb: "resolvedKDB",
+  kdh: "resolvedKDH",
+  kkop: "kkopStatus",
+  sb: "setbackStatus",
+  flags: "specialFlags",
+  flood: "floodClass"
+};
+
+function expandProperties(fc: GeoJSON.FeatureCollection): void {
+  for (const f of fc.features) {
+    const props = f.properties as Record<string, any>;
+    for (const [short, full] of Object.entries(EXPAND_KEYS)) {
+      if (short in props) {
+        props[full] = props[short];
+        delete props[short];
+      }
+    }
+    // useCategories is a JSON string whose category ids are also coded down
+    // (CATEGORY_CODE in zoningRules.js) — decode those too so every consumer sees
+    // the real snake_case id (e.g. "ev_charging"), never the 2-letter wire code.
+    if (typeof props.useCategories === "string") {
+      try {
+        const cats = JSON.parse(props.useCategories);
+        props.useCategories = JSON.stringify(
+          cats.map((c: { id: string; s: string }) => ({ id: CATEGORY_CODE_TO_ID[c.id] ?? c.id, s: c.s }))
+        );
+      } catch {
+        // leave as-is if malformed
+      }
+    }
+  }
 }
 
 async function main() {
@@ -60,6 +108,7 @@ async function main() {
     loadJSON("/map-data/kkop.geojson")
   ]);
   console.log(`Loaded ${rdtr.features.length} RDTR zones, ${kecamatan.features.length} kecamatan, ${kelurahan.features.length} kelurahan.`);
+  expandProperties(rdtr);
 
   let featuresById = new Map<number, any>();
   for (const f of rdtr.features) featuresById.set(f.properties.OBJECTID, f.properties);

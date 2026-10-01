@@ -1,4 +1,4 @@
-import { landUseGate } from "./zoningRules.js";
+import { landUseGate, classifyLandUse } from "./zoningRules.js";
 import { parseIntensityField, resolveIntensityValue } from "./intensityParser.js";
 
 // Actual values observed in Jakarta Satu's Resiko_Bencana "Resiko Banjir" layer
@@ -15,7 +15,11 @@ const FLOOD_CLASS_ORDER = ["Ringan", "Sedang", "Berat"];
  * @param {object} scenario { heightM, storeys, siteAreaM2, groundFloorM, upperFloorM, floodClass }
  */
 export function evaluateGates(props, scenario) {
-  const landUse = landUseGate(props);
+  // landUseGate() gives the overall Allowed/Conditional/Uncertain/Excluded gate +
+  // reason; classifyLandUse() gives the per-development-mix-item breakdown (which
+  // specific uses are IZN/BST/TBS/TBT). Both are needed — merge them here rather
+  // than making callers run two separate classification passes.
+  const landUse = { ...landUseGate(props), categories: classifyLandUse(props).categories };
 
   // --- Intensity (KDB/KLB/KDH) ---
   const kdbParsed = parseIntensityField(props.KDB);

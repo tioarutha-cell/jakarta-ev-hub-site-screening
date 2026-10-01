@@ -73,6 +73,26 @@ export const USE_CATEGORIES = [
   }
 ];
 
+// Short codes for each category id, used ONLY in the wire format (map-data/
+// rdtr-scored.geojson's useCategories field) to keep the ~109k-feature file small.
+// score-parcels.mjs encodes id -> code when writing; main.ts decodes code -> id
+// immediately after fetch, before the data reaches any other module, so every
+// other consumer (rescore.ts, sitePanel.ts, explain.ts) only ever sees the full id
+// and never needs to know the wire encoding exists.
+export const CATEGORY_CODE = {
+  ev_charging: "ev",
+  parking: "pk",
+  vehicle_servicing: "vs",
+  retail_fnb: "rf",
+  wastewater: "ww",
+  waste_management: "wm",
+  renewable_energy: "re",
+  mixed_use_commercial: "mc"
+};
+export const CATEGORY_CODE_TO_ID = Object.fromEntries(
+  Object.entries(CATEGORY_CODE).map(([id, code]) => [code, id])
+);
+
 const STATUS_RANK = { IZN: 0, BST: 1, TBS: 2, TBT: 3, UNKNOWN: 4 };
 export const STATUS_LABEL = {
   IZN: "Allowed",
