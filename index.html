@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jakarta EV Hub Site Screening</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script type="module" crossorigin src="/assets/main-DukFZjP-.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-CTTP-ZXF.css">
+</head>
+<body>
+  <div id="app">
+    <header id="app-header">
+      <div class="header-title">
+        <span class="header-title-main">JAKARTA EV HUB</span>
+        <span class="header-title-sub">Site Screening &amp; Buildability Map</span>
+      </div>
+      <div id="search-container"></div>
+      <div class="header-mode-toggle" id="mode-toggle">
+        <button data-mode="regulatory" class="mode-btn active">Regulatory Layers</button>
+        <button data-mode="buildability" class="mode-btn">Buildability</button>
+      </div>
+    </header>
+    <div id="app-body">
+      <aside id="left-panel"></aside>
+      <main id="map-container"></main>
+      <aside id="right-panel"></aside>
+    </div>
+    <footer id="app-footer">
+      <div id="legend-container"></div>
+      <a href="/guide.html" id="guide-link" class="footer-link">Regulations Guide</a>
+      <button id="sources-btn">Data &amp; Regulations</button>
+      <button id="methodology-btn">Methodology</button>
+    </footer>
+  </div>
+  <div id="sources-drawer" class="drawer hidden"></div>
+</body>
+</html>

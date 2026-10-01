@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Regulations Guide — Jakarta EV Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0c10;
+      --surface: #14171e;
+      --surface-2: #1b1f29;
+      --border: #262b36;
+      --border-soft: #1e222b;
+      --text: #eef1f6;
+      --text-dim: #93a0b4;
+      --text-faint: #5c6577;
+      --accent: #4b9fff;
+
+      --green: #35b06b;
+      --yellow: #d9b63e;
+      --orange: #e08a3c;
+      --red: #d6483f;
+
+      --z-commercial: #eab308;
+      --z-residential: #7a6bd9;
+      --z-industrial: #c97a3d;
+      --z-transport: #ec4899;
+      --z-office: #c9a679;
+      --z-green: #3f9e5c;
+      --z-water: #2f6fae;
+      --z-defense: #8a4a4a;
+      --z-road: #555c68;
+
+      --font-display: 'Archivo', system-ui, sans-serif;
+      --font-body: 'Public Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 19px;
+      line-height: 1.6;
+      padding-inline: 16px;
+    }
+
+    a { color: var(--accent); }
+
+    .topnav {
+      max-width: 980px;
+      margin: 0 auto;
+      padding-top: 28px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 7px;
+    }
+    .back-link:hover { color: var(--text); border-color: var(--accent); }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding-block: 28px 96px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 18px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 22px;
+      height: 2px;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(2.4rem, 5.4vw, 3.8rem);
+      line-height: 1.04;
+      letter-spacing: -0.015em;
+      margin: 0 0 22px;
+      text-wrap: balance;
+    }
+
+    .lede {
+      font-size: 1.28rem;
+      line-height: 1.55;
+      color: var(--text-dim);
+      max-width: 46ch;
+      margin: 0 0 8px;
+    }
+    .lede strong { color: var(--text); font-weight: 600; }
+
+    section { margin-top: 88px; }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 22px;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1.7rem, 3.4vw, 2.3rem);
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    .section-note {
+      font-size: 1rem;
+      color: var(--text-faint);
+      max-width: 34ch;
+      text-align: right;
+    }
+
+    .reg-list { display: flex; flex-direction: column; gap: 4px; }
+
+    .reg-card {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 28px;
+      padding: 34px 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .reg-card:last-child { border-bottom: none; }
+
+    .reg-tag {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-faint);
+      padding-top: 4px;
+    }
+
+    .reg-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: -0.005em;
+      margin: 0 0 4px;
+      color: var(--text);
+    }
+
+    .reg-code {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      color: var(--accent);
+      margin: 0 0 16px;
+      word-break: break-word;
+    }
+
+    .reg-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 16px;
+      padding: 12px 0;
+      border-top: 1px solid var(--border-soft);
+    }
+    .reg-row:first-of-type { border-top: none; padding-top: 4px; }
+
+    .reg-label {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      padding-top: 2px;
+    }
+
+    .reg-value {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      line-height: 1.55;
+    }
+    .reg-value strong { color: var(--text); font-weight: 600; }
+    .reg-value.not-a-law { font-style: italic; color: var(--text-faint); }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .legend-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 30px;
+    }
+
+    .legend-panel-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.2rem;
+      margin: 0 0 6px;
+    }
+
+    .legend-panel-sub {
+      font-size: 0.98rem;
+      color: var(--text-faint);
+      margin: 0 0 26px;
+      line-height: 1.5;
+    }
+
+    .swatch-row {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 18px;
+      align-items: flex-start;
+      padding: 15px 0;
+      border-top: 1px solid var(--border-soft);
+    }
+    .swatch-row:first-of-type { border-top: none; padding-top: 0; }
+
+    .swatch {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .swatch-name { font-weight: 700; font-size: 1.05rem; margin: 0 0 3px; }
+    .swatch-desc { font-size: 0.96rem; color: var(--text-dim); line-height: 1.5; margin: 0; }
+    .swatch-desc .score { font-family: var(--font-mono); color: var(--text-faint); font-size: 0.88rem; }
+
+    .bridge {
+      margin-top: 40px;
+      padding: 26px 28px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      font-size: 1.02rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+    .bridge strong { color: var(--text); }
+
+    footer {
+      margin-top: 96px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      font-size: 0.92rem;
+      color: var(--text-faint);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    footer .mono { font-family: var(--font-mono); }
+
+    @media (max-width: 720px) {
+      body { font-size: 17px; }
+      .reg-card { grid-template-columns: 1fr; gap: 8px; }
+      .reg-tag { padding-top: 0; }
+      .reg-row { grid-template-columns: 1fr; gap: 4px; }
+      .legend-grid { grid-template-columns: 1fr; }
+      .section-note { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topnav">
+    <a class="back-link" href="/">&larr; Back to map</a>
+  </div>
+
+  <div class="wrap">
+
+    <p class="eyebrow">Jakarta EV Hub · Site Screening Tool</p>
+    <h1>What the regulations mean, and what the colors tell you</h1>
+    <p class="lede">This tool doesn't invent suitability scores. Every color on the map traces back to a real Indonesian regulation or an official hazard dataset. <strong>Here is exactly what each one covers, and why it matters for a 20&ndash;25m EV charging hub.</strong></p>
+
+    <section id="regulations">
+      <div class="section-head">
+        <h2>The regulations</h2>
+        <p class="section-note">Five sources. Every zoning decision on the map cites one of these.</p>
+      </div>
+
+      <div class="reg-list">
+
+        <div class="reg-card">
+          <div class="reg-tag">REG&nbsp;01</div>
+          <div>
+            <p class="reg-name">Zoning &amp; Land Use Plan</p>
+            <p class="reg-code">Peraturan Gubernur DKI Jakarta No. 31/2022 &mdash; RDTR dan Peraturan Zonasi</p>
+            <div class="reg-row">
+              <div class="reg-label">Governs</div>
+              <div class="reg-value">What can legally be built where. Sets <strong>KDB</strong> (max ground coverage), <strong>KLB</strong> (max total floor area vs. land size), <strong>KDH</strong> (min green area), and an exact list of which activities are Allowed, Conditional, or Restricted in each zone.</div>
+            </div>
+            <div class="reg-row">
+              <div class="reg-label">Used here</div>
+              <div class="reg-value">This is the backbone of the whole map &mdash; all 109,000+ zoning parcels and their build limits come directly from this regulation's official digital layer, not an estimate.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reg-card">
+          <div class="reg-tag">REG&nbsp;02</div>
+          <div>
+            <p class="reg-name">Airport Safety Zones (KKOP)</p>
+            <p class="reg-code">SNI 03-7112-2005, plus airport-specific decrees (e.g. KM 14/2010 &mdash; Soekarno&ndash;Hatta)</p>
+            <div class="reg-row">
+              <div class="reg-label">Governs</div>
+              <div class="reg-value">Maximum building height near airports. Defines the approach, takeoff, and horizontal safety surfaces around Soekarno&ndash;Hatta, Halim, and Pondok Cabe that aircraft need clear of obstacles.</div>
+            </div>
+            <div class="reg-row">
+              <div class="reg-label">Used here</div>
+              <div class="reg-value">Flags any site sitting inside a protected flight surface, so a height conflict near an airport gets caught before it becomes an approval problem.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reg-card">
+          <div class="reg-tag">REG&nbsp;03</div>
+          <div>
+            <p class="reg-name">Riverbank &amp; Waterway Setbacks</p>
+            <p class="reg-code">Permen PUPR No. 28/PRT/M/2015</p>
+            <div class="reg-row">
+              <div class="reg-label">Governs</div>
+              <div class="reg-value">Mandatory no-build distance from rivers, lakes, and reservoirs &mdash; 10 to 30 meters depending on water depth, or a 3 meter minimum from a flood levee.</div>
+            </div>
+            <div class="reg-row">
+              <div class="reg-label">Used here</div>
+              <div class="reg-value">Any parcel already mapped as a river, coastal, or lake setback corridor is treated as a hard no &mdash; building there isn't a gray area.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reg-card">
+          <div class="reg-tag">REG&nbsp;04</div>
+          <div>
+            <p class="reg-name">Fire Truck Access</p>
+            <p class="reg-code">SNI 03-1735-2000</p>
+            <div class="reg-row">
+              <div class="reg-label">Governs</div>
+              <div class="reg-value">Any building taller than 10 meters needs a dedicated access road at least 6 meters wide, reachable from at least two sides of the building, for fire apparatus.</div>
+            </div>
+            <div class="reg-row">
+              <div class="reg-label">Used here</div>
+              <div class="reg-value">Directly relevant at 20&ndash;25m, but not yet checked against real road widths &mdash; that comes in the next phase. Included here so the requirement isn't a surprise later.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reg-card">
+          <div class="reg-tag">REG&nbsp;05</div>
+          <div>
+            <p class="reg-name">Flood Risk Assessment</p>
+            <p class="reg-code">Jakarta Satu Geoportal &mdash; Resiko Bencana (Disaster Risk) dataset</p>
+            <div class="reg-row">
+              <div class="reg-label">Governs</div>
+              <div class="reg-value not-a-law">Not a law &mdash; a government hazard map. Classifies land as <strong>Ringan</strong> (mild), <strong>Sedang</strong> (moderate), or <strong>Berat</strong> (severe) flood risk, based on historical flooding.</div>
+            </div>
+            <div class="reg-row">
+              <div class="reg-label">Used here</div>
+              <div class="reg-value">Lowers a site's score in flood-prone spots as a cost and risk factor &mdash; it doesn't disqualify a site the way a zoning violation does.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="colors">
+      <div class="section-head">
+        <h2>What the colors mean</h2>
+        <p class="section-note">The map has two views. Each one uses color for something different.</p>
+      </div>
+
+      <div class="legend-grid">
+
+        <div class="legend-panel">
+          <p class="legend-panel-title">Regulatory Layers view</p>
+          <p class="legend-panel-sub">Shows what each parcel is <em>zoned for</em> today &mdash; no scoring, just the raw legal designation.</p>
+
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-commercial)"></div>
+            <div><p class="swatch-name">Commercial &amp; Services</p><p class="swatch-desc">Shops, offices, F&amp;B &mdash; the zone type an EV hub fits into most naturally.</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-residential)"></div>
+            <div><p class="swatch-name">Residential</p><p class="swatch-desc">Housing zones. Usually too low-rise in KLB terms to support a 4-storey hub.</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-industrial)"></div>
+            <div><p class="swatch-name">Industrial</p><p class="swatch-desc">Manufacturing and warehousing zones (KPI).</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-transport)"></div>
+            <div><p class="swatch-name">Transportation</p><p class="swatch-desc">Terminals, stations, transit-oriented zones.</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-office)"></div>
+            <div><p class="swatch-name">Office</p><p class="swatch-desc">Dedicated office-use zoning (KT).</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-green)"></div>
+            <div><p class="swatch-name">Green Space</p><p class="swatch-desc">Parks and protected vegetation (RTH) &mdash; not buildable.</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-water)"></div>
+            <div><p class="swatch-name">Water Body</p><p class="swatch-desc">Rivers, lakes, reservoirs &mdash; not buildable.</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-defense)"></div>
+            <div><p class="swatch-name">Defense &amp; Security</p><p class="swatch-desc">Military and security-restricted land (HK).</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--z-road)"></div>
+            <div><p class="swatch-name">Road Body</p><p class="swatch-desc">The street network itself &mdash; not a parcel, not buildable.</p></div>
+          </div>
+        </div>
+
+        <div class="legend-panel">
+          <p class="legend-panel-title">Buildability view</p>
+          <p class="legend-panel-sub">Shows the computed suitability score for the current height and development assumptions &mdash; this is the answer, not the raw zoning.</p>
+
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--green)"></div>
+            <div><p class="swatch-name">Strong Candidate <span class="score">75&ndash;100</span></p><p class="swatch-desc">Zoning allows it, intensity and height both fit, no hard conflicts found.</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--yellow)"></div>
+            <div><p class="swatch-name">Candidate With Conditions <span class="score">55&ndash;74</span></p><p class="swatch-desc">Workable, but something needs a closer look &mdash; a conditional use, an unresolved height estimate.</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--orange)"></div>
+            <div><p class="swatch-name">Heavily Constrained <span class="score">30&ndash;54</span></p><p class="swatch-desc">Possible, but expensive or approval-intensive &mdash; low KLB headroom, flood exposure, or a KKOP overlap.</p></div>
+          </div>
+          <div class="swatch-row">
+            <div class="swatch" style="background:var(--red)"></div>
+            <div><p class="swatch-name">Excluded <span class="score">&lt;30 or hard block</span></p><p class="swatch-desc">Illegal zoning (road, water, defense land) or a protected setback corridor. Not a low score &mdash; a legal no.</p></div>
+          </div>
+
+          <div class="bridge">
+            <strong>Red always wins.</strong> If REG&nbsp;01 says the land isn't developable, or REG&nbsp;03 marks it as a setback corridor, the site is Excluded regardless of how well everything else scores. A great access road can't override an illegal zone.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <footer>
+      <span>Jakarta EV Charging Hub &mdash; Site Screening Tool</span>
+      <span class="mono">Sources verified against Jakarta Satu Geoportal, 2026-09-25</span>
+    </footer>
+
+  </div>
+</body>
+</html>
