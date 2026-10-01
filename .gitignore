@@ -1,0 +1,7 @@
+node_modules/
+dist/
+raw-data/
+public/map-data/
+*.log
+*.tsbuildinfo
+.DS_Store

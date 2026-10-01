@@ -1,0 +1,29 @@
+{
+  "name": "jakarta-ev-hub-screening",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Jakarta EV Charging Hub Buildability & Site Screening Map",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "fetch:rdtr": "node scripts/fetch-rdtr.mjs",
+    "fetch:admin": "node scripts/fetch-admin-boundaries.mjs",
+    "fetch:kkop": "node scripts/fetch-kkop.mjs",
+    "fetch:flood": "node scripts/fetch-flood.mjs",
+    "process:score": "node scripts/score-parcels.mjs",
+    "process:publish-static": "node scripts/publish-static.mjs",
+    "data:build": "npm run fetch:rdtr && npm run fetch:admin && npm run fetch:kkop && npm run fetch:flood && npm run process:score && npm run process:publish-static"
+  },
+  "dependencies": {
+    "@turf/turf": "^7.2.0",
+    "maplibre-gl": "^4.7.1",
+    "proj4": "^2.15.0",
+    "stream-json": "^3.7.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}
