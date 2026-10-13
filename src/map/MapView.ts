@@ -1,8 +1,7 @@
 import maplibregl, { Map as MLMap } from "maplibre-gl";
 
-// CARTO's Dark Matter basemap: no API key required, dark theme fits the
-// investment/planning-tool aesthetic requested (spec §27).
-const CARTO_DARK_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+// CARTO's Positron basemap: light, low-contrast, no API key required.
+const CARTO_LIGHT_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
 const JAKARTA_BOUNDS: [[number, number], [number, number]] = [
   [106.65, -6.42],
@@ -12,7 +11,7 @@ const JAKARTA_BOUNDS: [[number, number], [number, number]] = [
 export function createMap(container: HTMLElement): MLMap {
   const map = new maplibregl.Map({
     container,
-    style: CARTO_DARK_STYLE,
+    style: CARTO_LIGHT_STYLE,
     center: [106.845, -6.21],
     zoom: 11,
     maxBounds: [

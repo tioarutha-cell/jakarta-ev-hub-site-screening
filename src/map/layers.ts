@@ -26,8 +26,8 @@ const ZONE_FILL_EXPRESSION: any = [
   ["==", ["get", "KODZON"], 31031000], "#3f9e5c", // RTH green space
   ["==", ["get", "KODZON"], 31010000], "#2f6fae", // BA water body
   ["==", ["get", "KODZON"], 32130000], "#8a4a4a", // HK defense
-  ["==", ["get", "KODZON"], 32010000], "#555c68", // BJ road body
-  "#4a5060"
+  ["==", ["get", "KODZON"], 32010000], "#b4bac4", // BJ road body
+  "#a3aab6"
 ];
 
 export function addDataLayers(map: MLMap, data: {
@@ -66,7 +66,7 @@ export function addDataLayers(map: MLMap, data: {
         "Yellow", CLASS_COLORS.Yellow,
         "Orange", CLASS_COLORS.Orange,
         "Red", CLASS_COLORS.Red,
-        "#4a5060"
+        "#a3aab6"
       ],
       "fill-opacity": 0.65
     }
@@ -76,7 +76,7 @@ export function addDataLayers(map: MLMap, data: {
     id: "rdtr-outline",
     type: "line",
     source: RDTR_SOURCE,
-    paint: { "line-color": "#0b0d11", "line-width": 0.4, "line-opacity": 0.5 }
+    paint: { "line-color": "#ffffff", "line-width": 0.4, "line-opacity": 0.6 }
   });
 
   map.addLayer({
@@ -84,7 +84,7 @@ export function addDataLayers(map: MLMap, data: {
     type: "line",
     source: RDTR_SOURCE,
     filter: ["==", ["get", "OBJECTID"], -1],
-    paint: { "line-color": "#ffffff", "line-width": 2.5 }
+    paint: { "line-color": "#111827", "line-width": 2.5 }
   });
 
   // --- KKOP overlay (aviation surfaces) ---
@@ -106,14 +106,14 @@ export function addDataLayers(map: MLMap, data: {
     id: "kecamatan-outline",
     type: "line",
     source: ADMIN_KECAMATAN_SOURCE,
-    paint: { "line-color": "#6b7484", "line-width": 1, "line-opacity": 0.8 }
+    paint: { "line-color": "#475569", "line-width": 1.1, "line-opacity": 0.8 }
   });
   map.addLayer({
     id: "kelurahan-outline",
     type: "line",
     source: ADMIN_KELURAHAN_SOURCE,
     minzoom: 13,
-    paint: { "line-color": "#4a5060", "line-width": 0.5, "line-opacity": 0.6 }
+    paint: { "line-color": "#64748b", "line-width": 0.5, "line-opacity": 0.6 }
   });
 }
 
